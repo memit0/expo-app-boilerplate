@@ -3,24 +3,43 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
+import { ColorSchemeName } from 'react-native';
+
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
+    text: '#000',
     background: '#fff',
-    tint: tintColorLight,
+    tint: '#2f95dc',
     icon: '#687076',
+    card: '#f2f2f7',
     tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: '#2f95dc',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#fff',
+    background: '#000',
+    tint: '#fff',
+    icon: '#9ba1a6',
+    card: '#1c1c1e',
+    tabIconDefault: '#9ba1a6',
+    tabIconSelected: '#fff',
   },
-};
+} as const;
+
+export type Theme = keyof typeof Colors;
+
+export function useThemeColor(
+  props: { light?: string; dark?: string },
+  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+) {
+  const theme = useColorScheme() ?? 'light';
+  const colorFromProps = props[theme];
+
+  if (colorFromProps) {
+    return colorFromProps;
+  }
+  return Colors[theme][colorName];
+}

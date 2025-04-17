@@ -24,11 +24,12 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     if (isOnboarded === null) return;
 
     const inAuthGroup = segments[0] === 'onboarding';
+    const inOnboardingFlow = segments[1] !== undefined;
 
     if (!isOnboarded && !inAuthGroup) {
       router.replace('/onboarding');
-    } else if (isOnboarded && inAuthGroup) {
-      router.replace('/');
+    } else if (isOnboarded && inAuthGroup && !inOnboardingFlow) {
+      router.replace('/(tabs)/summary');
     }
   }, [isOnboarded, segments]);
 

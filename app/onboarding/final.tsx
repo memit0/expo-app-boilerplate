@@ -1,66 +1,96 @@
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useSuperwall } from '@/hooks/useSuperwall';
-import { useOnboarding } from '@/contexts/OnboardingContext';
-import { SUPERWALL_TRIGGERS } from '@/config/superwall';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFoodLog } from '@/contexts/FoodLogContext';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import type { MaterialCommunityIcons as IconType } from '@expo/vector-icons';
 
 export default function FinalScreen() {
-  const { showPaywall } = useSuperwall();
+  const router = useRouter();
+  const { userProfile } = useFoodLog();
   const { setIsOnboarded } = useOnboarding();
 
-  const handleGetStarted = async () => {
+  const handleComplete = async () => {
     try {
-      await showPaywall(SUPERWALL_TRIGGERS.ONBOARDING);
-      setIsOnboarded(true);
+      await setIsOnboarded(true);
+      router.replace('/(tabs)/summary');
     } catch (error) {
-      console.error('Failed to show paywall:', error);
+      console.error('Error completing onboarding:', error);
     }
   };
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.content}>
           <View style={styles.header}>
-            <MaterialCommunityIcons name="rocket-launch" size={48} color="#0A7EA4" />
             <ThemedText type="title" style={styles.title}>
-              Start Building Today
+              All Set!
             </ThemedText>
             <ThemedText style={styles.description}>
-              You're all set to create your next great app. Get started now and save weeks of development time!
+              Your profile is complete. Here's a summary of your information:
             </ThemedText>
           </View>
 
-          <View style={styles.benefits}>
-            <Benefit icon="lightning-bolt" text="Launch faster" />
-            <Benefit icon="palette" text="Professional design" />
-            <Benefit icon="cash-multiple" text="Ready for monetization" />
-          </View>
-        </ScrollView>
+          <View style={styles.summary}>
+            <View style={styles.summaryItem}>
+              <MaterialCommunityIcons name="account" size={24} color="#0A7EA4" />
+              <View style={styles.summaryText}>
+                <ThemedText type="defaultSemiBold">{userProfile?.name}</ThemedText>
+                <ThemedText style={styles.summarySubtext}>
+                  {userProfile?.age} years old
+                </ThemedText>
+              </View>
+            </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-          <ThemedText type="defaultSemiBold" style={styles.buttonText}>
-            Get Started Now
-          </ThemedText>
-        </TouchableOpacity>
+            <View style={styles.summaryItem}>
+              <MaterialCommunityIcons name="scale" size={24} color="#0A7EA4" />
+              <View style={styles.summaryText}>
+                <ThemedText type="defaultSemiBold">
+                  {userProfile?.weight} kg
+                </ThemedText>
+                <ThemedText style={styles.summarySubtext}>
+                  {userProfile?.height} cm
+                </ThemedText>
+              </View>
+            </View>
+
+            <View style={styles.summaryItem}>
+              <MaterialCommunityIcons name="run" size={24} color="#0A7EA4" />
+              <View style={styles.summaryText}>
+                <ThemedText type="defaultSemiBold">
+                  {userProfile?.activityLevel}
+                </ThemedText>
+                <ThemedText style={styles.summarySubtext}>
+                  Activity Level
+                </ThemedText>
+              </View>
+            </View>
+
+            <View style={styles.summaryItem}>
+              <MaterialCommunityIcons name="food-apple" size={24} color="#0A7EA4" />
+              <View style={styles.summaryText}>
+                <ThemedText type="defaultSemiBold">
+                  {userProfile?.dietaryPreference}
+                </ThemedText>
+                <ThemedText style={styles.summarySubtext}>
+                  Dietary Preference
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={handleComplete}>
+            <ThemedText type="defaultSemiBold" style={styles.buttonText}>
+              Start Tracking
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </ThemedView>
-  );
-}
-
-function Benefit({ icon, text }: { icon: keyof typeof IconType.glyphMap; text: string }) {
-  return (
-    <View style={styles.benefitContainer}>
-      <View style={styles.iconContainer}>
-        <MaterialCommunityIcons name={icon} size={24} color="#0A7EA4" />
-      </View>
-      <ThemedText style={styles.benefitText}>{text}</ThemedText>
-    </View>
   );
 }
 
@@ -71,58 +101,48 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  scroll: {
+  content: {
     flex: 1,
-  },
-  scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 24,
-    gap: 32,
+    paddingVertical: 24,
   },
   header: {
-    alignItems: 'center',
-    gap: 16,
+    marginBottom: 32,
   },
   title: {
     fontSize: 32,
-    textAlign: 'center',
+    marginBottom: 8,
   },
   description: {
-    textAlign: 'center',
-    fontSize: 18,
-    lineHeight: 28,
+    fontSize: 16,
     opacity: 0.7,
+    lineHeight: 24,
   },
-  benefits: {
+  summary: {
     gap: 16,
-    paddingBottom: 24,
+    marginBottom: 32,
   },
-  benefitContainer: {
+  summaryItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    backgroundColor: '#0A7EA410',
     padding: 16,
     borderRadius: 12,
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#0A7EA420',
-    alignItems: 'center',
-    justifyContent: 'center',
+  summaryText: {
+    flex: 1,
   },
-  benefitText: {
-    fontSize: 17,
+  summarySubtext: {
+    fontSize: 14,
+    opacity: 0.7,
   },
   button: {
     backgroundColor: '#0A7EA4',
-    padding: 16,
-    borderRadius: 12,
+    padding: 20,
+    borderRadius: 16,
     alignItems: 'center',
-    marginHorizontal: 24,
-    marginBottom: 16,
+    marginTop: 'auto',
   },
   buttonText: {
     color: 'white',

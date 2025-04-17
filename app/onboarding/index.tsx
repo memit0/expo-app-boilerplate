@@ -11,7 +11,7 @@ export default function WelcomeScreen() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push('/onboarding/problem');
+    router.push('/onboarding/basic-info');
   };
 
   return (
@@ -20,13 +20,13 @@ export default function WelcomeScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
           <View style={styles.main}>
-            <MaterialCommunityIcons name="star" size={64} color="#0A7EA4" />
+            <MaterialCommunityIcons name="food-apple" size={64} color="#0A7EA4" />
             <ThemedText type="title" style={styles.title}>
-              Your App Name
+              NutriDense
             </ThemedText>
             <View style={styles.subtitleContainer}>
               <ThemedText style={styles.subtitle}>
-                A short, compelling tagline that captures your app's value
+                Track your nutrition and optimize your health with personalized insights
               </ThemedText>
             </View>
           </View>
