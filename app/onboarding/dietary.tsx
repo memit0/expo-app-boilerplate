@@ -1,8 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useFoodLog } from '@/contexts/FoodLogContext';
@@ -72,6 +71,7 @@ export default function DietaryScreen() {
                   selectedPreference === preference.id && styles.optionSelected,
                 ]}
                 onPress={() => setSelectedPreference(preference.id)}
+                activeOpacity={0.7}
               >
                 <View style={styles.optionContent}>
                   <ThemedText type="defaultSemiBold" style={styles.optionLabel}>
@@ -88,7 +88,11 @@ export default function DietaryScreen() {
             ))}
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleNext}>
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={handleNext}
+            activeOpacity={0.7}
+          >
             <ThemedText type="defaultSemiBold" style={styles.buttonText}>
               Continue
             </ThemedText>
